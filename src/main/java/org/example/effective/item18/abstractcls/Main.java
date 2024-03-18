@@ -1,6 +1,4 @@
-package org.example.effective.item19.abstractcls;
-
-import org.example.effective.item19.abstractcls.InstrumentedHashSet;
+package org.example.effective.item18.abstractcls;
 
 import java.util.List;
 

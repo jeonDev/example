@@ -1,4 +1,4 @@
-package org.example.effective.item19.abstractcls;
+package org.example.effective.item18.abstractcls;
 
 import org.jetbrains.annotations.NotNull;
 
