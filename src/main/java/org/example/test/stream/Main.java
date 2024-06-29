@@ -5,10 +5,11 @@ import java.time.LocalDate;
 import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class Main {
 
@@ -30,14 +31,28 @@ public class Main {
         YearMonth currentYearMonth = YearMonth.from(currentDate);
         LocalDate lastDayOfCurrentMonth = currentYearMonth.atEndOfMonth();
         LocalDate date = firstDayOfLastMonth;
+        Dttm dttm = null;
         while (!date.isAfter(lastDayOfCurrentMonth)) {
-            Dttm dttm = new Dttm(date.format(formatter));
+            dttm = new Dttm(date.format(formatter));
             dttmList.add(dttm);
             date = date.plusDays(1);
         }
 
+        Map<String, List<Data>> collect = dataList.stream()
+                .collect(Collectors.groupingBy(Data::getDate));
 
-
+        dttmList.stream()
+                .flatMap(d -> {
+                    List<Data> datas = collect.getOrDefault(d.getDate(), Collections.emptyList());
+                    if (datas.isEmpty()) {
+                        return Stream.of(new Data(d.getDate(), "1", BigDecimal.ZERO));
+                    } else {
+                        return datas.stream()
+                                .map(p -> new Data(d.getDate(), p.getDivisionCode(), p.getAmount()));
+                    }
+                })
+                .toList()
+                .forEach(System.out::println);
     }
 
     static class Dttm {
@@ -78,6 +93,15 @@ public class Main {
             this.date = date;
             this.divisionCode = divisionCode;
             this.amount = amount;
+        }
+
+        @Override
+        public String toString() {
+            return "Data{" +
+                    "date='" + date + '\'' +
+                    ", divisionCode='" + divisionCode + '\'' +
+                    ", amount=" + amount +
+                    '}';
         }
     }
 }
